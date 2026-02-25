@@ -1,0 +1,44 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: performance_guarantee_detector
+  version: v1.0.0
+  description: "Detects and blocks performance guarantees and promissory language about investment returns that violate SEC advertising and anti-fraud rules."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "SEC Rule 206(4)-1"
+    - "SEC Rule 156"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - wealth-management
+    - financial-advisory
+  failure_modes_addressed:
+    - performance_guarantee
+    - misleading_return_projection
+    - promissory_language
+  severity: critical
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - "(?i)will\\s+earn\\s+\\d+(\\.\\d+)?\\s*%"
+    - "(?i)guaranteed\\s+\\d+(\\.\\d+)?\\s*%\\s*(return|yield|gain|profit)"
+    - "(?i)promised\\s+returns?\\s+of\\s+\\d+"
+    - "(?i)you\\s+will\\s+make\\s+\\$[\\d,]+"
+    - "(?i)certain\\s+to\\s+profit"
+    - "(?i)assured\\s+\\d+(\\.\\d+)?\\s*%\\s*(annual|monthly|quarterly)"
+    - "(?i)minimum\\s+return\\s+of\\s+\\d+"
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

@@ -1,0 +1,61 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: risk_disclosure_enforcer
+  version: v1.0.0
+  description: "Enforces the presence of required risk disclosure language in investment-related AI outputs. Uses defense-in-depth with keyword detection and LLM semantic analysis to warn when standard disclosures are missing."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "SEC Rule 156"
+    - "FINRA 2210"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - wealth-management
+    - financial-advisory
+  failure_modes_addressed:
+    - missing_risk_disclosure
+    - inadequate_disclaimer
+    - misleading_omission
+  severity: high
+spec:
+  type: hybrid
+  action_on_violation: warn
+  keywords:
+    required_phrases:
+      - "past performance"
+      - "risk of loss"
+      - "not guaranteed"
+      - "may lose value"
+    match_mode: any_missing_triggers
+  thresholds:
+    block: 0.9
+    warn: 0.6
+    pass: 0.3
+  defenseInDepth:
+    layers:
+      - name: keyword_disclosure_check
+        type: keyword
+        weight: 0.4
+        required: true
+      - name: llm_semantic_disclosure_check
+        type: llm
+        weight: 0.6
+        required: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 500
+    cacheEnabled: true
+    priority: 2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 1000
+    cacheTTLSec: 300
+evaluation:
+  endpoint: "https://api.openai.com/v1/chat/completions"
+  model: gpt-4
+  provider: openai

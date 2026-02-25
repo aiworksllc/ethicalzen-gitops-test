@@ -2,14 +2,28 @@ apiVersion: ethicalzen.ai/v1
 kind: Environment
 metadata:
   name: production
+  description: "Production environment configuration for the Apex Capital asset management guardrail suite. All guardrails enforced with strict validation and blocking actions."
 spec:
-  overrides:
-    pii_blocker:
-      action_on_violation: block
-    acme_claims_approval_blocker:
-      thresholds:
-        block: 0.70
-      action_on_violation: block
-  gateway:
-    sync_url: "https://gateway.acme-internal.com"
-    api_key_env: "EZ_PROD_API_KEY"
+  tenants:
+    - apex_capital
+  guardrails:
+    - unsuitable_advice_blocker
+    - performance_guarantee_detector
+    - market_manipulation_detector
+    - insider_information_blocker
+    - financial_pii_protector
+    - unauthorized_trading_blocker
+    - risk_disclosure_enforcer
+    - fiduciary_duty_detector
+    - aml_screening_guardrail
+    - client_suitability_checker
+  variables:
+    validation_mode: strict
+    log_level: warn
+    cache_enabled: "true"
+    blockchain_record: "true"
+    gateway_url: "https://gateway.apex-capital.com"
+    api_key_env: EZ_PROD_API_KEY
+    fail_open: "false"
+    alert_channel: "#compliance-alerts"
+    audit_retention_days: "2555"

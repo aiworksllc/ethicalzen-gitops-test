@@ -1,0 +1,45 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: unauthorized_trading_blocker
+  version: v1.0.0
+  description: "Detects and blocks AI-generated language that implies unauthorized discretionary trading, order execution without client consent, or automatic account actions."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "FINRA Rule 2510"
+    - "Investment Advisers Act 1940"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - broker-dealer
+    - wealth-management
+  failure_modes_addressed:
+    - unauthorized_trading
+    - discretionary_trading_violation
+    - consent_bypass
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    blocked_phrases:
+      - "execute the trade"
+      - "place the order"
+      - "buy on your behalf"
+      - "sell your position"
+      - "I'll make the trade"
+      - "automatic rebalancing without consent"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

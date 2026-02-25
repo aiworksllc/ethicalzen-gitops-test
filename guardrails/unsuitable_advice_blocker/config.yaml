@@ -1,0 +1,48 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: unsuitable_advice_blocker
+  version: v1.0.0
+  description: "Detects and blocks unsuitable investment advice language including guarantees, risk-free claims, and misleading promises that violate SEC and FINRA advertising rules."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "SEC Rule 206(4)-1"
+    - "FINRA 2210"
+    - "Investment Advisers Act 1940"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - wealth-management
+    - financial-advisory
+  failure_modes_addressed:
+    - misleading_investment_advice
+    - unsuitable_recommendation
+    - regulatory_advertising_violation
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    blocked_phrases:
+      - "guaranteed returns"
+      - "risk-free investment"
+      - "can't lose"
+      - "sure thing"
+      - "double your money"
+      - "no risk"
+      - "100% safe"
+      - "free money"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

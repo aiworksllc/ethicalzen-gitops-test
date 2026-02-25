@@ -1,0 +1,47 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: financial_pii_protector
+  version: v1.0.0
+  description: "Detects and blocks financial personally identifiable information including SSNs, account numbers, routing numbers, tax IDs, and credit card numbers to comply with data protection regulations."
+  owner: security@apex-capital.com
+  domain: asset-management
+  regulations:
+    - GLBA
+    - SOX
+    - PCI-DSS
+    - CCPA
+  labels:
+    environment: production
+    team: platform-security
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - banking
+    - wealth-management
+    - financial-advisory
+  failure_modes_addressed:
+    - pii_leak
+    - financial_data_exposure
+    - account_number_disclosure
+    - identity_theft_vector
+  severity: critical
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+    - "\\b\\d{8,12}\\b"
+    - "\\b\\d{9}\\b"
+    - "\\b\\d{2}-\\d{7}\\b"
+    - "\\b(?:\\d{4}[- ]?){3}\\d{4}\\b"
+    - "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b"
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: false
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 150
+    cacheTTLSec: 0

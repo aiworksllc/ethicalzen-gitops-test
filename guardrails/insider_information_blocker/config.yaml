@@ -1,0 +1,46 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: insider_information_blocker
+  version: v1.0.0
+  description: "Detects and blocks references to material non-public information (MNPI), insider tips, and undisclosed corporate events that could facilitate insider trading violations."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "SEC Rule 10b-5"
+    - "Insider Trading Sanctions Act"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - broker-dealer
+    - hedge-fund
+    - investment-banking
+  failure_modes_addressed:
+    - insider_trading
+    - mnpi_disclosure
+    - information_barrier_breach
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    blocked_phrases:
+      - "material non-public"
+      - "MNPI"
+      - "haven't announced yet"
+      - "before the press release"
+      - "confidential merger"
+      - "undisclosed earnings"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

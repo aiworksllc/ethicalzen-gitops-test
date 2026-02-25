@@ -1,0 +1,42 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: portfolio-advisor-guardian
+  version: v1.0.0
+  description: "Comprehensive guardrail contract for the Portfolio Advisory AI Assistant. Applies all 10 asset management guardrails to ensure full regulatory compliance across SEC, FINRA, BSA/AML, and data protection requirements."
+  tenantId: apex_capital
+  labels:
+    environment: production
+    team: advisory-engineering
+    industry: asset-management
+    risk_tier: critical
+spec:
+  serviceUrl: "https://ai-advisor.apex-capital.com/v1/chat/completions"
+  guardrails:
+    - unsuitable_advice_blocker
+    - performance_guarantee_detector
+    - market_manipulation_detector
+    - insider_information_blocker
+    - financial_pii_protector
+    - unauthorized_trading_blocker
+    - risk_disclosure_enforcer
+    - fiduciary_duty_detector
+    - aml_screening_guardrail
+    - client_suitability_checker
+  failureModes:
+    - misleading_investment_advice
+    - performance_guarantee
+    - market_manipulation
+    - insider_trading
+    - pii_leak
+    - unauthorized_trading
+    - missing_risk_disclosure
+    - fiduciary_breach
+    - money_laundering_facilitation
+    - unsuitable_recommendation
+  allowedSuites:
+    - unsuitable-advice-tests
+    - financial-pii-tests
+    - market-manipulation-tests
+  validationMode: strict
+  blockchainRecord: true

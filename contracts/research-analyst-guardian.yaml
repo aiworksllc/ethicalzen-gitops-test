@@ -1,0 +1,28 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: research-analyst-guardian
+  version: v1.0.0
+  description: "Guardrail contract for the Research Analyst AI Assistant. Focuses on preventing performance guarantees, market manipulation language, insider information references, and enforcing risk disclosures in research reports."
+  tenantId: apex_capital
+  labels:
+    environment: production
+    team: research-engineering
+    industry: asset-management
+    risk_tier: high
+spec:
+  serviceUrl: "https://ai-research.apex-capital.com/v1/chat/completions"
+  guardrails:
+    - performance_guarantee_detector
+    - market_manipulation_detector
+    - insider_information_blocker
+    - risk_disclosure_enforcer
+  failureModes:
+    - performance_guarantee
+    - market_manipulation
+    - insider_trading
+    - missing_risk_disclosure
+  allowedSuites:
+    - market-manipulation-tests
+  validationMode: strict
+  blockchainRecord: true

@@ -1,0 +1,28 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: client-onboarding-guardian
+  version: v1.0.0
+  description: "Guardrail contract for the Client Onboarding AI Assistant. Focuses on PII protection, authorization controls, fiduciary compliance, and AML screening during the client intake and account setup process."
+  tenantId: apex_capital
+  labels:
+    environment: production
+    team: onboarding-engineering
+    industry: asset-management
+    risk_tier: high
+spec:
+  serviceUrl: "https://ai-onboarding.apex-capital.com/v1/chat/completions"
+  guardrails:
+    - financial_pii_protector
+    - unauthorized_trading_blocker
+    - fiduciary_duty_detector
+    - aml_screening_guardrail
+  failureModes:
+    - pii_leak
+    - unauthorized_trading
+    - fiduciary_breach
+    - money_laundering_facilitation
+  allowedSuites:
+    - financial-pii-tests
+  validationMode: strict
+  blockchainRecord: true

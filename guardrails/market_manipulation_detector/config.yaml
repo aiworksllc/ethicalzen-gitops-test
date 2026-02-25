@@ -1,0 +1,46 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: market_manipulation_detector
+  version: v1.0.0
+  description: "Detects and blocks language related to market manipulation schemes including pump-and-dump, front running, wash trading, and other prohibited trading practices."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "Securities Exchange Act Section 9(a)(2)"
+    - "Dodd-Frank Act"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - broker-dealer
+    - hedge-fund
+  failure_modes_addressed:
+    - market_manipulation
+    - prohibited_trading_practice
+    - securities_fraud
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    blocked_phrases:
+      - "pump and dump"
+      - "front running"
+      - "wash trading"
+      - "insider tip"
+      - "corner the market"
+      - "short squeeze scheme"
+      - "market rigging"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

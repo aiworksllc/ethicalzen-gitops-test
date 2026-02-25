@@ -1,0 +1,48 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: aml_screening_guardrail
+  version: v1.0.0
+  description: "Detects and blocks language related to anti-money laundering red flags including structuring, layering, smurfing, shell company transfers, and other suspicious financial activity patterns."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - BSA
+    - AML
+    - "USA PATRIOT Act"
+    - FinCEN
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - banking
+    - broker-dealer
+    - wealth-management
+  failure_modes_addressed:
+    - money_laundering_facilitation
+    - structuring
+    - suspicious_activity_failure
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    blocked_phrases:
+      - "structure deposits"
+      - "smurfing"
+      - "shell company transfer"
+      - "layering transactions"
+      - "nominee account"
+      - "cash-intensive business"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300

@@ -1,0 +1,63 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: client_suitability_checker
+  version: v1.0.0
+  description: "Detects AI-generated investment recommendations that may be unsuitable for the client's risk profile, age, or investment objectives. Uses defense-in-depth with keyword and LLM layers to identify suitability violations."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "FINRA Rule 2111"
+    - "FINRA Rule 2090"
+    - "Regulation BI"
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - wealth-management
+    - financial-advisory
+    - retirement-planning
+  failure_modes_addressed:
+    - unsuitable_recommendation
+    - risk_tolerance_mismatch
+    - client_profile_violation
+  severity: high
+spec:
+  type: hybrid
+  action_on_violation: warn
+  keywords:
+    blocked_phrases:
+      - "aggressive strategy for retiree"
+      - "concentrated position"
+      - "unsuitable risk"
+      - "beyond risk tolerance"
+    case_sensitive: false
+  thresholds:
+    block: 0.9
+    warn: 0.6
+    pass: 0.3
+  defenseInDepth:
+    layers:
+      - name: keyword_suitability_check
+        type: keyword
+        weight: 0.4
+        required: true
+      - name: llm_suitability_analysis
+        type: llm
+        weight: 0.6
+        required: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 500
+    cacheEnabled: true
+    priority: 2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 1000
+    cacheTTLSec: 300
+evaluation:
+  endpoint: "https://api.openai.com/v1/chat/completions"
+  model: gpt-4
+  provider: openai

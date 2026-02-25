@@ -1,0 +1,47 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: fiduciary_duty_detector
+  version: v1.0.0
+  description: "Detects language indicating potential fiduciary duty conflicts including proprietary product promotion, revenue sharing arrangements, and undisclosed conflicts of interest."
+  owner: compliance@apex-capital.com
+  domain: asset-management
+  regulations:
+    - "Investment Advisers Act Section 206"
+    - "DOL Fiduciary Rule"
+    - ERISA
+  labels:
+    environment: production
+    team: compliance-engineering
+    industry: asset-management
+  applicable_industries:
+    - asset-management
+    - wealth-management
+    - retirement-planning
+  failure_modes_addressed:
+    - fiduciary_breach
+    - undisclosed_conflict_of_interest
+    - self_dealing
+  severity: high
+spec:
+  type: keyword
+  action_on_violation: warn
+  keywords:
+    blocked_phrases:
+      - "proprietary fund"
+      - "higher commission"
+      - "our own product"
+      - "revenue sharing"
+      - "soft dollar"
+      - "pay to play"
+      - "conflict of interest"
+    case_sensitive: false
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: true
+    priority: 2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 300
