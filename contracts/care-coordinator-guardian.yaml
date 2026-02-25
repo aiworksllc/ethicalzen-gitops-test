@@ -1,0 +1,30 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: care-coordinator-guardian
+  version: v1.0.0
+  description: "Guardrail contract for the Care Coordination AI assistant. Protects against provider steering, ensures mental health parity compliance, and properly escalates member grievances while maintaining HIPAA minimum necessary standards."
+  tenantId: summit_health
+  labels:
+    environment: production
+    team: care-management
+    cookbook: health-insurance
+    use_case: care-coordination-assistant
+spec:
+  serviceUrl: "https://care-coordinator-ai.summithealthplan.com/v1/coordinate"
+  guardrails:
+    - phi_exposure_blocker
+    - provider_recommendation_blocker
+    - mental_health_parity_enforcer
+    - member_grievance_escalator
+    - hipaa_minimum_necessary
+  failureModes:
+    - phi_leak
+    - provider_steering
+    - mental_health_parity_violation
+    - grievance_suppression
+    - minimum_necessary_violation
+  allowedSuites:
+    - phi_exposure_tests
+  validationMode: strict
+  blockchainRecord: true

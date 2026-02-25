@@ -1,0 +1,33 @@
+apiVersion: ethicalzen.ai/v1
+kind: Environment
+metadata:
+  name: staging
+  description: "Staging environment for Summit Health Plan. All guardrails active in permissive mode for testing and validation. Violations are logged but not enforced to allow development and QA workflows."
+spec:
+  tenants:
+    - summit_health
+    - summit_health_qa
+  guardrails:
+    - phi_exposure_blocker
+    - coverage_determination_blocker
+    - medical_necessity_blocker
+    - claims_auto_approval_blocker
+    - provider_recommendation_blocker
+    - mental_health_parity_enforcer
+    - surprise_billing_detector
+    - member_grievance_escalator
+    - hipaa_minimum_necessary
+    - prior_auth_guardrail
+  variables:
+    LOG_LEVEL: "debug"
+    ENFORCEMENT_MODE: "permissive"
+    CACHE_ENABLED: "false"
+    CACHE_TTL_SECONDS: "0"
+    MAX_LATENCY_MS: "2000"
+    BLOCKCHAIN_RECORD: "false"
+    FAIL_OPEN: "true"
+    ALERT_ON_BLOCK: "false"
+    ALERT_ON_WARN: "false"
+    COMPLIANCE_AUDIT_LOG: "enabled"
+    PHI_REDACTION_MODE: "partial"
+    GRIEVANCE_ESCALATION_WEBHOOK: "https://webhooks-staging.summithealthplan.com/grievance-alert"

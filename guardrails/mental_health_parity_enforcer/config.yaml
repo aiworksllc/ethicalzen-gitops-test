@@ -1,0 +1,55 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: mental_health_parity_enforcer
+  version: v1.0.0
+  description: "Warns when AI responses suggest non-parity-compliant limitations on mental health or substance use disorder benefits. The Mental Health Parity and Addiction Equity Act requires that MH/SUD benefits be no more restrictive than medical/surgical benefits."
+  owner: behavioral-health-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "MHPAEA (Mental Health Parity and Addiction Equity Act)"
+    - "ACA Essential Health Benefits"
+    - "21st Century Cures Act"
+    - "State Mental Health Parity Laws"
+  labels:
+    environment: production
+    team: behavioral-health
+    cookbook: health-insurance
+    risk_tier: high
+  applicable_industries:
+    - health-insurance
+    - managed-care
+    - behavioral-health
+  failure_modes_addressed:
+    - mental_health_parity_violation
+    - discriminatory_benefit_limitation
+    - non_quantitative_treatment_limit
+  severity: high
+spec:
+  type: keyword
+  action_on_violation: warn
+  keywords:
+    warn_phrases:
+      - "mental health excluded"
+      - "behavioral health limit"
+      - "substance abuse cap"
+      - "psychiatric day limit"
+      - "therapy session maximum"
+      - "different copay for mental"
+      - "mental health visits limited to"
+      - "no coverage for behavioral health"
+      - "substance use treatment not covered"
+      - "psychiatric benefit exhausted"
+  thresholds:
+    block: 0.7
+    warn: 0.4
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 120
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 2

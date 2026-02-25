@@ -1,0 +1,32 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: claims-processor-guardian
+  version: v1.0.0
+  description: "Guardrail contract for the Claims Processing AI system. Focuses on preventing unauthorized claim adjudication, PHI exposure, and ensuring medical necessity determinations remain with human clinical reviewers."
+  tenantId: summit_health
+  labels:
+    environment: production
+    team: claims-engineering
+    cookbook: health-insurance
+    use_case: claims-processing-backend
+spec:
+  serviceUrl: "https://claims-processor-ai.summithealthplan.com/v1/adjudicate"
+  guardrails:
+    - phi_exposure_blocker
+    - coverage_determination_blocker
+    - medical_necessity_blocker
+    - claims_auto_approval_blocker
+    - hipaa_minimum_necessary
+  failureModes:
+    - phi_leak
+    - unauthorized_coverage_decision
+    - unauthorized_clinical_decision
+    - automated_claim_adjudication
+    - minimum_necessary_violation
+  allowedSuites:
+    - phi_exposure_tests
+    - coverage_determination_tests
+    - claims_auto_approval_tests
+  validationMode: strict
+  blockchainRecord: true

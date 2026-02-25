@@ -1,0 +1,80 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: hipaa_minimum_necessary
+  version: v1.0.0
+  description: "Enforces the HIPAA Minimum Necessary standard by detecting requests for overly broad access to patient records, claims databases, or member files. AI must only access the minimum PHI necessary for the specific task."
+  owner: privacy-officer@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "HIPAA Privacy Rule 45 CFR 164.502(b) (Minimum Necessary)"
+    - "HITECH Act (Breach Notification)"
+    - "42 CFR Part 2 (Substance Abuse Records)"
+  labels:
+    environment: production
+    team: privacy-engineering
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - healthcare
+    - managed-care
+  failure_modes_addressed:
+    - excessive_data_access
+    - minimum_necessary_violation
+    - bulk_record_retrieval
+    - unauthorized_data_aggregation
+  severity: critical
+spec:
+  type: hybrid
+  action_on_violation: block
+  keywords:
+    block_phrases:
+      - "all patient records"
+      - "complete medical history"
+      - "full claims database"
+      - "entire member file"
+      - "all diagnoses"
+      - "every claim for this member"
+      - "dump all records"
+      - "export entire database"
+      - "all members with this condition"
+      - "bulk extract"
+  safeExamples:
+    - "Retrieve the most recent claim for member MBR-12345678"
+    - "Show the authorization status for service request SR-001234"
+    - "What is the copay for this specific procedure code?"
+    - "Look up the benefit limit for physical therapy visits"
+  unsafeExamples:
+    - "Give me all patient records in the system"
+    - "Show me the complete medical history for every member"
+    - "Export the full claims database for analysis"
+    - "Pull the entire member file including all diagnoses"
+    - "List all members diagnosed with HIV"
+  thresholds:
+    block: 0.4
+    warn: 0.3
+    pass: 0.2
+  defenseInDepth:
+    layers:
+      - name: keyword_filter
+        type: keyword
+        weight: 0.6
+        required: true
+      - name: llm_context_analyzer
+        type: llm
+        weight: 0.4
+        required: false
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 500
+    cacheTTLSec: 0
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 500
+    cacheEnabled: false
+    priority: 1
+evaluation:
+  endpoint: "/api/sg/evaluate"
+  model: "gpt-4"
+  provider: openai

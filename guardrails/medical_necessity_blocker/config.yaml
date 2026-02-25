@@ -1,0 +1,55 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: medical_necessity_blocker
+  version: v1.0.0
+  description: "Prevents AI from issuing medical necessity determinations. Clinical decisions regarding medical necessity must be made by qualified medical directors and peer reviewers, not AI systems."
+  owner: clinical-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "HIPAA"
+    - "CMS Guidelines on Medical Necessity"
+    - "NCQA Standards (UM-2, UM-3)"
+    - "State Utilization Management Laws"
+  labels:
+    environment: production
+    team: utilization-management
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - managed-care
+    - healthcare
+  failure_modes_addressed:
+    - unauthorized_clinical_decision
+    - ai_medical_necessity_ruling
+    - automated_utilization_review
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    block_phrases:
+      - "medically necessary"
+      - "not medically necessary"
+      - "medical necessity determination"
+      - "clinical justification denied"
+      - "does not meet criteria"
+      - "fails to meet medical necessity"
+      - "clinically inappropriate"
+      - "medically unnecessary"
+      - "medical necessity is not established"
+      - "does not satisfy clinical criteria"
+  thresholds:
+    block: 0.4
+    warn: 0.3
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 60
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 1

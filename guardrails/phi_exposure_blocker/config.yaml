@@ -1,0 +1,85 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: phi_exposure_blocker
+  version: v1.0.0
+  description: "Detects and blocks Protected Health Information (PHI) including member IDs, health plan IDs, SSNs, DOB-name combinations, medical record numbers, and group numbers per HIPAA Safe Harbor de-identification standard."
+  owner: compliance-team@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "HIPAA Privacy Rule (45 CFR 164.514)"
+    - "HITECH Act"
+    - "42 CFR Part 2 (Substance Abuse Confidentiality)"
+  labels:
+    environment: production
+    team: privacy-engineering
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - healthcare
+    - managed-care
+  failure_modes_addressed:
+    - phi_leak
+    - member_id_exposure
+    - ssn_disclosure
+    - medical_record_exposure
+    - unauthorized_phi_disclosure
+  severity: critical
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: member_id
+      pattern: "\\bMBR-[A-Z0-9]{8}\\b"
+      weight: 1.0
+      category: high_risk
+    - name: health_plan_id
+      pattern: "\\bHP[A-Z]{2}-\\d{6,10}\\b"
+      weight: 1.0
+      category: high_risk
+    - name: ssn
+      pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
+      weight: 1.0
+      category: high_risk
+    - name: dob_with_name
+      pattern: "\\b(?:DOB|date of birth|born)\\s*[:;]?\\s*\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}\\b"
+      weight: 0.9
+      category: high_risk
+    - name: medical_record_number
+      pattern: "\\bMRN-[A-Z0-9]{6,10}\\b"
+      weight: 1.0
+      category: high_risk
+    - name: group_number
+      pattern: "\\bGRP-\\d{6,10}\\b"
+      weight: 0.8
+      category: medium_risk
+    - name: policy_number
+      pattern: "\\bPOL-[A-Z0-9]{8,12}\\b"
+      weight: 0.9
+      category: high_risk
+    - name: npi_number
+      pattern: "\\b\\d{10}\\b"
+      weight: 0.5
+      category: medium_risk
+  thresholds:
+    block: 0.3
+    warn: 0.2
+    pass: 0.1
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 100
+    cacheTTLSec: 0
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 100
+    cacheEnabled: false
+    priority: 1
+calibration:
+  sampleSize: 200
+  accuracy: 0.97
+  precision: 0.96
+  recall: 0.98
+  f1Score: 0.97
+  calibratedAt: "2026-02-24T00:00:00Z"
+  thresholdTuned: 0.3

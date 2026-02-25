@@ -1,0 +1,57 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: member_grievance_escalator
+  version: v1.0.0
+  description: "Detects member intent to file grievances, complaints, or appeals and ensures proper escalation to human representatives. Health plans must provide timely grievance processes per CMS and ERISA requirements."
+  owner: member-services-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "ERISA Claims and Appeals Procedures"
+    - "CMS Grievance and Appeal Requirements (42 CFR 422.564)"
+    - "State Insurance Regulations (Complaint Handling)"
+    - "ACA Internal and External Review Requirements"
+  labels:
+    environment: production
+    team: member-services
+    cookbook: health-insurance
+    risk_tier: high
+  applicable_industries:
+    - health-insurance
+    - managed-care
+  failure_modes_addressed:
+    - grievance_suppression
+    - appeal_denial_without_process
+    - member_rights_violation
+    - inadequate_escalation
+  severity: high
+spec:
+  type: keyword
+  action_on_violation: warn
+  keywords:
+    warn_phrases:
+      - "I want to file a complaint"
+      - "formal grievance"
+      - "appeal this decision"
+      - "unfair treatment"
+      - "I want to escalate"
+      - "speak to a supervisor"
+      - "file an appeal"
+      - "I am filing a grievance"
+      - "external review"
+      - "independent review organization"
+      - "state insurance commissioner"
+      - "I want to complain"
+  thresholds:
+    block: 0.7
+    warn: 0.3
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 0
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: false
+    priority: 1

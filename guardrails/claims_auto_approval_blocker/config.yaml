@@ -1,0 +1,54 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: claims_auto_approval_blocker
+  version: v1.0.0
+  description: "Prevents AI from auto-approving or auto-denying insurance claims without human review. All claim adjudication decisions require human-in-the-loop oversight per state insurance regulations and NAIC model laws."
+  owner: claims-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "State Insurance Regulations"
+    - "NAIC Model Laws (Unfair Claims Settlement Practices Act)"
+    - "CMS Managed Care Regulations"
+    - "DOL ERISA Claim Procedure Rules"
+  labels:
+    environment: production
+    team: claims-engineering
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - managed-care
+  failure_modes_addressed:
+    - automated_claim_adjudication
+    - claims_approval_without_review
+    - bypassed_human_oversight
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    block_phrases:
+      - "claim approved automatically"
+      - "auto-adjudicated"
+      - "approved without review"
+      - "processed without human review"
+      - "auto-approved"
+      - "automatically denied"
+      - "auto-denied"
+      - "system approved"
+      - "batch approved"
+      - "claim finalized without review"
+  thresholds:
+    block: 0.4
+    warn: 0.3
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 60
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 1

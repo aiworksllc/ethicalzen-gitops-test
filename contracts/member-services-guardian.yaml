@@ -1,0 +1,42 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: member-services-guardian
+  version: v1.0.0
+  description: "Comprehensive guardrail contract for the Member Services AI Assistant. Applies all 10 health insurance guardrails to protect members during AI-assisted interactions including benefits inquiries, claims status, grievance filing, and general plan information."
+  tenantId: summit_health
+  labels:
+    environment: production
+    team: member-services
+    cookbook: health-insurance
+    use_case: member-facing-chatbot
+spec:
+  serviceUrl: "https://member-services-ai.summithealthplan.com/v1/chat"
+  guardrails:
+    - phi_exposure_blocker
+    - coverage_determination_blocker
+    - medical_necessity_blocker
+    - claims_auto_approval_blocker
+    - provider_recommendation_blocker
+    - mental_health_parity_enforcer
+    - surprise_billing_detector
+    - member_grievance_escalator
+    - hipaa_minimum_necessary
+    - prior_auth_guardrail
+  failureModes:
+    - phi_leak
+    - unauthorized_coverage_decision
+    - unauthorized_clinical_decision
+    - automated_claim_adjudication
+    - provider_steering
+    - mental_health_parity_violation
+    - surprise_billing_misinformation
+    - grievance_suppression
+    - minimum_necessary_violation
+    - automated_prior_auth_denial
+  allowedSuites:
+    - phi_exposure_tests
+    - coverage_determination_tests
+    - claims_auto_approval_tests
+  validationMode: strict
+  blockchainRecord: true

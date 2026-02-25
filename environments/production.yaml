@@ -2,14 +2,31 @@ apiVersion: ethicalzen.ai/v1
 kind: Environment
 metadata:
   name: production
+  description: "Production environment for Summit Health Plan. All guardrails active with strict enforcement. Block-action guardrails will reject violating prompts. Warn-action guardrails will flag and log violations for compliance review."
 spec:
-  overrides:
-    pii_blocker:
-      action_on_violation: block
-    acme_claims_approval_blocker:
-      thresholds:
-        block: 0.70
-      action_on_violation: block
-  gateway:
-    sync_url: "https://gateway.acme-internal.com"
-    api_key_env: "EZ_PROD_API_KEY"
+  tenants:
+    - summit_health
+  guardrails:
+    - phi_exposure_blocker
+    - coverage_determination_blocker
+    - medical_necessity_blocker
+    - claims_auto_approval_blocker
+    - provider_recommendation_blocker
+    - mental_health_parity_enforcer
+    - surprise_billing_detector
+    - member_grievance_escalator
+    - hipaa_minimum_necessary
+    - prior_auth_guardrail
+  variables:
+    LOG_LEVEL: "warn"
+    ENFORCEMENT_MODE: "strict"
+    CACHE_ENABLED: "true"
+    CACHE_TTL_SECONDS: "60"
+    MAX_LATENCY_MS: "500"
+    BLOCKCHAIN_RECORD: "true"
+    FAIL_OPEN: "false"
+    ALERT_ON_BLOCK: "true"
+    ALERT_ON_WARN: "true"
+    COMPLIANCE_AUDIT_LOG: "enabled"
+    PHI_REDACTION_MODE: "full"
+    GRIEVANCE_ESCALATION_WEBHOOK: "https://webhooks.summithealthplan.com/grievance-alert"

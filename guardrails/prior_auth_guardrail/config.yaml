@@ -1,0 +1,54 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: prior_auth_guardrail
+  version: v1.0.0
+  description: "Prevents AI from automatically denying prior authorization requests without clinical review. Prior authorization decisions must involve qualified clinical reviewers per CMS interoperability rules and state reform laws."
+  owner: utilization-management@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "CMS Interoperability and Prior Authorization Rules (CMS-0057-F)"
+    - "State Prior Authorization Reform Laws"
+    - "NAIC Prior Authorization Model Act"
+    - "ERISA Claim Procedure Requirements"
+  labels:
+    environment: production
+    team: utilization-management
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - managed-care
+  failure_modes_addressed:
+    - automated_prior_auth_denial
+    - prior_auth_without_clinical_review
+    - authorization_auto_cancellation
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    block_phrases:
+      - "prior authorization denied automatically"
+      - "auto-denied"
+      - "prior auth rejected without review"
+      - "authorization cancelled"
+      - "prior auth auto-rejected"
+      - "authorization denied by system"
+      - "automatically rejected authorization"
+      - "system denied prior auth"
+      - "prior authorization cancelled without review"
+      - "auto-cancelled authorization"
+  thresholds:
+    block: 0.4
+    warn: 0.3
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 60
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 1

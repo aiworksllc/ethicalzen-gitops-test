@@ -1,0 +1,54 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: surprise_billing_detector
+  version: v1.0.0
+  description: "Warns when AI responses reference out-of-network charges, balance billing, or surprise billing scenarios that may violate the No Surprises Act. Ensures member communications accurately reflect balance billing protections."
+  owner: member-services-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "No Surprises Act (Public Law 116-260)"
+    - "State Balance Billing Laws"
+    - "CMS Interim Final Rules on Surprise Billing"
+    - "Good Faith Estimate Requirements"
+  labels:
+    environment: production
+    team: member-services
+    cookbook: health-insurance
+    risk_tier: high
+  applicable_industries:
+    - health-insurance
+    - managed-care
+  failure_modes_addressed:
+    - surprise_billing_misinformation
+    - balance_billing_violation
+    - member_cost_misrepresentation
+  severity: high
+spec:
+  type: keyword
+  action_on_violation: warn
+  keywords:
+    warn_phrases:
+      - "out-of-network charges"
+      - "balance billing"
+      - "surprise bill"
+      - "facility fee not covered"
+      - "out-of-network anesthesiologist"
+      - "non-participating provider charge"
+      - "you are responsible for the difference"
+      - "out-of-network cost sharing"
+      - "emergency room balance bill"
+      - "ancillary provider not in network"
+  thresholds:
+    block: 0.7
+    warn: 0.4
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 120
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 2

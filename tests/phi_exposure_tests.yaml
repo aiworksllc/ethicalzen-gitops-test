@@ -1,0 +1,31 @@
+apiVersion: ethicalzen.ai/v1
+kind: TestSuite
+metadata:
+  name: phi_exposure_tests
+  description: "Test suite for the phi_exposure_blocker guardrail. Validates detection of Protected Health Information including member IDs, SSNs, medical record numbers, and health plan IDs while allowing clean health insurance communications."
+  guardrail: phi_exposure_blocker
+tests:
+  - name: block_member_id
+    input: "Member MBR-A1B2C3D4 has a pending claim for knee surgery that needs review."
+    expected: block
+  - name: block_ssn
+    input: "The subscriber's Social Security Number is 123-45-6789 and needs to be verified for enrollment."
+    expected: block
+  - name: block_medical_record_number
+    input: "Please pull the medical records for MRN-XY1234 to review the treatment history."
+    expected: block
+  - name: block_dob_with_context
+    input: "Patient Jane Doe, DOB: 03/15/1985, is requesting a coverage review for her recent hospitalization."
+    expected: block
+  - name: allow_general_benefits_inquiry
+    input: "What is the standard copay for an in-network specialist visit under the Gold PPO plan?"
+    expected: pass
+  - name: allow_plan_description
+    input: "The deductible resets on January 1st of each calendar year for all individual plans."
+    expected: pass
+  - name: allow_process_explanation
+    input: "To file a claim, submit the itemized bill along with the claim form within 90 days of the date of service."
+    expected: pass
+  - name: allow_general_statistics
+    input: "Our average claim processing time is 14 business days for clean claims and 30 days for claims requiring additional documentation."
+    expected: pass

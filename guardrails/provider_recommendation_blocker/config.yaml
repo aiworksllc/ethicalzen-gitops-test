@@ -1,0 +1,56 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: provider_recommendation_blocker
+  version: v1.0.0
+  description: "Warns when AI makes specific provider or facility recommendations that could constitute steering. AI may provide general network information but must not recommend specific providers, which could violate anti-kickback and self-referral laws."
+  owner: network-compliance@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "ACA (Affordable Care Act) Network Adequacy"
+    - "Anti-Kickback Statute (42 USC 1320a-7b)"
+    - "Stark Law (Physician Self-Referral)"
+    - "State Any Willing Provider Laws"
+  labels:
+    environment: production
+    team: provider-network
+    cookbook: health-insurance
+    risk_tier: high
+  applicable_industries:
+    - health-insurance
+    - managed-care
+    - healthcare
+  failure_modes_addressed:
+    - provider_steering
+    - anti_kickback_violation
+    - self_referral_violation
+    - biased_provider_recommendation
+  severity: high
+spec:
+  type: keyword
+  action_on_violation: warn
+  keywords:
+    warn_phrases:
+      - "I recommend Dr."
+      - "you should see"
+      - "the best provider is"
+      - "go to this facility"
+      - "use our preferred"
+      - "in-network provider is better"
+      - "you must use this doctor"
+      - "we recommend this specialist"
+      - "the best hospital for this is"
+      - "switch to this provider"
+  thresholds:
+    block: 0.7
+    warn: 0.4
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 120
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 2

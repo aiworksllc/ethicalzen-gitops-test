@@ -1,0 +1,54 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: coverage_determination_blocker
+  version: v1.0.0
+  description: "Blocks AI from issuing definitive coverage determinations, claim approvals, or claim denials. Only licensed human reviewers may communicate binding coverage decisions to members."
+  owner: compliance-team@summithealthplan.com
+  domain: health-insurance
+  regulations:
+    - "ACA Section 1557"
+    - "ERISA (Employee Retirement Income Security Act)"
+    - "State Insurance Regulations"
+    - "CMS Managed Care Regulations"
+  labels:
+    environment: production
+    team: claims-engineering
+    cookbook: health-insurance
+    risk_tier: critical
+  applicable_industries:
+    - health-insurance
+    - managed-care
+  failure_modes_addressed:
+    - unauthorized_coverage_decision
+    - ai_claim_adjudication
+    - binding_determination_without_review
+  severity: critical
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    block_phrases:
+      - "your claim is approved"
+      - "coverage is denied"
+      - "we have determined coverage"
+      - "your request is authorized"
+      - "benefits are approved"
+      - "claim is rejected"
+      - "your coverage has been terminated"
+      - "claim has been adjudicated"
+      - "we are approving your claim"
+      - "your appeal is denied"
+  thresholds:
+    block: 0.4
+    warn: 0.3
+    pass: 0.2
+  envelope:
+    maxTokens: 4096
+    maxLatencyMs: 200
+    cacheTTLSec: 60
+  runtime:
+    evaluationMode: sync
+    timeoutMs: 200
+    cacheEnabled: true
+    priority: 1
