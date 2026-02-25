@@ -1,0 +1,15 @@
+apiVersion: ethicalzen.ai/v1
+kind: Environment
+metadata:
+  name: production
+spec:
+  overrides:
+    pii_blocker:
+      action_on_violation: block
+    acme_claims_approval_blocker:
+      thresholds:
+        block: 0.70
+      action_on_violation: block
+  gateway:
+    sync_url: "https://gateway.acme-internal.com"
+    api_key_env: "EZ_PROD_API_KEY"

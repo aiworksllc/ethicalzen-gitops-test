@@ -1,0 +1,31 @@
+apiVersion: ethicalzen.ai/v1
+kind: Contract
+metadata:
+  name: claims-bot-guardian
+  id: dc_acme_claims_001
+  version: v1.0.0
+  tenant: acme
+  description: "Guardrail contract for the Auto Claims Processing Bot"
+  industry: insurance
+spec:
+  service:
+    name: "Auto Claims Processing Bot"
+    endpoint: "https://internal-llm.acme.com/v1/chat/completions"
+    model: "gpt-4"
+  guardrails:
+    - name: pii_blocker
+      version: v1.0.0
+    - name: acme_claims_approval_blocker
+      version: v1.0.0
+    - name: prompt_injection_blocker
+      version: latest
+  envelope:
+    constraints:
+      pii_risk:
+        min: 0.0
+        max: 0.1
+        action: block
+      anomaly_score:
+        min: 0.0
+        max: 0.75
+        action: block
