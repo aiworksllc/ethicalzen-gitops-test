@@ -1,0 +1,26 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: direct_phi_extractor
+  version: v2.0.0
+  description: "Detects direct requests for patient-specific data such as names, dates of birth, diagnoses, medications, etc."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: pattern_0
+      pattern: "\b(name|date of birth|diagnosis|medication|allergy|insurance number|contact information|medical record identifier)\b"
+      weight: 1.0
+    - name: pattern_1
+      pattern: "\b(ssn|social security number)\b"
+      weight: 1.0
+    - name: pattern_2
+      pattern: "\b(dob|date of birth)\b"
+      weight: 1.0
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

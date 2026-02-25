@@ -1,0 +1,31 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: financial_advice_smart
+  version: v2.0.0
+  description: "AI-powered guardrail that blocks specific financial advice, investment"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  regulations:
+    - "SEC_REGULATIONS"
+    - "FINRA_RULES"
+    - "OWASP_LLM_TOP_10"
+  applicable_industries:
+    - finance
+    - banking
+    - insurance
+    - wealth_management
+    - all
+  failure_modes_addressed:
+    - unauthorized_financial_advice
+    - investment_recommendations
+    - portfolio_allocation
+    - market_timing
+  severity: critical
+spec:
+  type: ssg_v3
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

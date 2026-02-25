@@ -1,0 +1,30 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: legal_advice_smart
+  version: v2.0.0
+  description: "AI-powered guardrail that blocks specific legal advice, case recommendations,"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  regulations:
+    - "ABA_MODEL_RULES"
+    - "OWASP_LLM_TOP_10"
+  applicable_industries:
+    - legal
+    - insurance
+    - real_estate
+    - hr
+    - compliance
+  failure_modes_addressed:
+    - unauthorized_legal_opinion
+    - case_specific_advice
+    - legal_strategy
+    - liability_assessment
+  severity: critical
+spec:
+  type: ssg_v3
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

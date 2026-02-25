@@ -1,0 +1,20 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: internal_logs_retrieval_blocker
+  version: v2.0.0
+  description: "Prevents retrieval of internal logs, embeddings, or intermediate outputs that may contain PHI."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: pattern_0
+      pattern: ".*(internal logs|embeddings|chain-of-thought|intermediate validation outputs|stored patient packets).*"
+      weight: 1.0
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

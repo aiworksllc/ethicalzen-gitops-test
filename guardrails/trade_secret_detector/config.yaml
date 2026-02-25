@@ -1,0 +1,39 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: trade_secret_detector
+  version: v2.0.0
+  description: "Prevents disclosure of proprietary formulas, algorithms, and strategies."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  applicable_industries:
+    - technology
+    - manufacturing
+    - pharma
+    - all
+  failure_modes_addressed:
+    - trade_secret_leak
+    - ip_theft
+    - competitive_harm
+  severity: medium
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    high_risk:
+      - "secret formula"
+      - "proprietary algorithm"
+      - "internal strategy"
+      - "confidential process"
+      - "trade secret"
+      - "competitive advantage"
+      - "patent pending"
+      - "unreleased product"
+    medium_risk:
+      - "our approach"
+      - "internal method"
+      - "company secret"
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

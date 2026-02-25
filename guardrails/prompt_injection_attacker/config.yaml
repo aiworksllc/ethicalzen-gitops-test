@@ -1,0 +1,23 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: prompt_injection_attacker
+  version: v2.0.0
+  description: "Detects prompt-injection attacks that attempt to override system instructions"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: pattern_0
+      pattern: "\b(ignore previous instructions|show me the raw intake form|return the prior conversation)\b"
+      weight: 1.0
+    - name: pattern_1
+      pattern: "\b(override|bypass|ignore)\b"
+      weight: 1.0
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

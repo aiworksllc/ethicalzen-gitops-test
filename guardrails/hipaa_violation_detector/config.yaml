@@ -1,0 +1,16 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: hipaa_violation_detector
+  version: v2.0.0
+  description: "Detects responses that could inadvertently disclose PHI through examples, patterns, or unintended correlations"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: llm
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

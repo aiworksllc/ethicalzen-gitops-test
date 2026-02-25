@@ -1,0 +1,20 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: creditcard_pattern_v3
+  version: v2.0.0
+  description: "creditcard_pattern_v3"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: pattern_0
+      pattern: "\\b4[0-9]{15}\\b"
+      weight: 1.0
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

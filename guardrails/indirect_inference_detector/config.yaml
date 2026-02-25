@@ -1,0 +1,16 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: indirect_inference_detector
+  version: v2.0.0
+  description: "Detects attempts to infer patient-specific data through demographic hints, narrative context, or derived attributes"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: llm
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

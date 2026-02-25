@@ -1,0 +1,20 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: direct_phi_extraction_blocker
+  version: v2.0.0
+  description: "Blocks direct requests for patient-specific information such as names, dates of birth, and medical identifiers."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: regex
+  action_on_violation: block
+  patterns:
+    - name: pattern_0
+      pattern: ".*(name|date of birth|diagnosis|medication|allergy|insurance number|contact information|medical record identifier).*"
+      weight: 1.0
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

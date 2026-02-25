@@ -1,0 +1,39 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: immigration_advice_blocker
+  version: v2.0.0
+  description: "Prevents unauthorized legal advice on visas, asylum, and deportation."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  applicable_industries:
+    - legal
+    - government
+    - all
+  failure_modes_addressed:
+    - legal_advice
+    - immigration_fraud
+    - unauthorized_practice
+  severity: medium
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    high_risk:
+      - "how to get visa"
+      - "avoid deportation"
+      - "asylum application"
+      - "overstay visa"
+      - "work without permit"
+      - "fake marriage"
+      - "immigration fraud"
+      - "green card trick"
+    medium_risk:
+      - "visa interview tips"
+      - "immigration lawyer"
+      - "visa application"
+      - "petition process"
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

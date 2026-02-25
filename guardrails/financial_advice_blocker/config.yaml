@@ -1,0 +1,16 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: financial_advice_blocker
+  version: v2.0.0
+  description: "Blocks specific investment recommendations and financial advice that should come from licensed professionals."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  severity: medium
+spec:
+  type: ssg_v3
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

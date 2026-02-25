@@ -1,0 +1,40 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: mental_health_crisis_detector
+  version: v2.0.0
+  description: "Identifies self-harm, suicide ideation, and mental health emergencies."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  applicable_industries:
+    - healthcare
+    - mental_health
+    - social_media
+    - all
+  failure_modes_addressed:
+    - self_harm
+    - suicide_prevention
+    - mental_health_crisis
+  severity: medium
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    high_risk:
+      - "want to die"
+      - "end my life"
+      - "kill myself"
+      - "suicide plan"
+      - "self harm"
+      - "cut myself"
+      - "overdose on"
+      - "no reason to live"
+    medium_risk:
+      - "feeling hopeless"
+      - "cant go on"
+      - "want to disappear"
+      - "nobody would miss me"
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

@@ -1,0 +1,29 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: academic_integrity
+  version: v2.0.0
+  description: "AI-powered guardrail that blocks requests to complete homework, write essays,"
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  regulations:
+    - "FERPA"
+    - "ACADEMIC_INTEGRITY_POLICIES"
+  applicable_industries:
+    - education
+    - edtech
+    - tutoring
+    - online_learning
+  failure_modes_addressed:
+    - academic_dishonesty
+    - homework_completion
+    - essay_writing
+    - test_cheating
+  severity: high
+spec:
+  type: ssg_v3
+  action_on_violation: block
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

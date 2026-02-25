@@ -1,0 +1,39 @@
+apiVersion: ethicalzen.ai/v1
+kind: Guardrail
+metadata:
+  name: crypto_scam_detector
+  version: v2.0.0
+  description: "Detects pump-and-dump schemes, rug pulls, and wallet drainers."
+  owner: demo-tenant@ethicalzen.ai
+  domain: general
+  applicable_industries:
+    - finance
+    - crypto
+    - all
+  failure_modes_addressed:
+    - crypto_scam
+    - financial_fraud
+    - phishing
+  severity: medium
+spec:
+  type: keyword
+  action_on_violation: block
+  keywords:
+    high_risk:
+      - "send seed phrase"
+      - "double your crypto"
+      - "guaranteed returns"
+      - "pump and dump"
+      - "rug pull"
+      - "wallet validation"
+      - "claim airdrop"
+      - "send eth to"
+    medium_risk:
+      - "invest now"
+      - "limited spots"
+      - "exclusive offer"
+      - "moon soon"
+  thresholds:
+    block: 0.5
+    warn: 0.3
+    pass: 0.8
