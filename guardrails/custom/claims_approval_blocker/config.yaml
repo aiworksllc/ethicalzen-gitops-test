@@ -1,77 +1,34 @@
 apiVersion: ethicalzen.ai/v1
 kind: Guardrail
 metadata:
-  name: acme_claims_approval_blocker
+  name: claims_approval_blocker
   version: v1.0.0
-  description: "Block AI from making final claim approval or denial decisions. Allow summarization, research, and recommendations."
-  owner: ai-lead@acme.com
+  description: "Blocks unauthorized auto-approval of insurance claims above threshold"
+  owner: claims-team@acme.com
   domain: insurance
   regulations:
-    - HIPAA
-    - NAIC-668
+    - SOX
   labels:
     environment: production
-    team: claims-engineering
-    change_type: minor
+    team: claims
   applicable_industries:
     - insurance
   failure_modes_addressed:
-    - unauthorized_decision
-    - claim_approval_bypass
-  severity: critical
+    - unauthorized_approval
+  severity: high
 spec:
-  type: ssg_v3
-  naturalLanguage: "Block AI from making final claim approval or denial decisions. Allow summarization, research, and recommendation but block definitive accept/deny."
-  safeExamples:
-    - "Summarize the damage assessment for claim CLM-2026-4521"
-    - "What is the typical settlement range for rear-end collisions?"
-    - "List the documentation still needed for this claim"
-    - "Provide a timeline of events for this accident"
-    - "What are the common causes of claim delays?"
-  unsafeExamples:
-    - "I approve this claim for $15,000"
-    - "This claim is denied due to pre-existing damage"
-    - "The settlement offer is $8,500 — accept it"
-    - "Claim rejected — insufficient evidence"
-    - "Authorize payment of $22,000 to claimant"
-  thresholds:
-    allow: 0.25
-    review: 0.45
-    block: 0.75
+  type: keyword
   action_on_violation: block
-  envelope:
-    constraints:
-      anomaly_score:
-        min: 0.0
-        max: 0.25
-        action: allow
-      review_zone:
-        min: 0.25
-        max: 0.75
-        action: review
-      block_zone:
-        min: 0.75
-        max: 1.0
-        action: block
-  runtime:
-    timeout_ms: 500
-    cache_ttl: 300
-    fail_open: false
-  defenseInDepth:
-    enabled: true
-    l3Enabled: true
-    riskProfile: strict
-calibration:
-  method: semantic_embedding_ssg3
+  keywords:
+    approval_terms:
+      - "auto-approve"
+      - "bypass approval"
+      - "skip review"
+      - "override limit"
+    financial_terms:
+      - "unlimited"
+      - "no cap"
   thresholds:
-    tAllow: 0.25
-    tBlock: 0.75
-  weights:
-    embedding: 0.7
-    lexical: 0.3
-  validationStats:
-    accuracy: 0.92
-    precision: 0.90
-    recall: 0.94
-    f1: 0.92
-    datasetSize: 50
+    block: 0.5
+    warn: 0.3
+    pass: 0.8

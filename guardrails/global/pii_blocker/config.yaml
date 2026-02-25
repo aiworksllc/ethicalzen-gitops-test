@@ -3,15 +3,13 @@ kind: Guardrail
 metadata:
   name: pii_blocker
   version: v1.0.0
-  description: "Detects and blocks Personally Identifiable Information (SSN, email, phone, credit card, DOB, IP)"
+  description: "Detects and blocks PII (SSN, email, phone, credit card)"
   owner: security-team@acme.com
   domain: general
   regulations:
     - HIPAA
     - GDPR
     - CCPA
-    - SOC2
-    - PCI-DSS
   labels:
     environment: production
     team: platform-security
@@ -19,27 +17,13 @@ metadata:
     - healthcare
     - finance
     - insurance
-    - legal
-    - general
   failure_modes_addressed:
     - pii_leak
     - data_breach
-    - privacy_violation
-    - unauthorized_disclosure
   severity: critical
 spec:
   type: regex
   action_on_violation: block
-  envelope:
-    constraints:
-      pii_risk:
-        min: 0.0
-        max: 0.1
-        action: block
-  runtime:
-    timeout_ms: 100
-    cache_ttl: 0
-    fail_open: false
   patterns:
     - name: ssn
       pattern: "\\b\\d{3}-\\d{2}-\\d{4}\\b"
@@ -50,27 +34,25 @@ spec:
       weight: 0.8
       category: medium_risk
     - name: phone
-      pattern: "\\b\\(?(\\d{3})\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}\\b"
+      pattern: "\\b\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}\\b"
       weight: 0.6
       category: medium_risk
     - name: credit_card
       pattern: "\\b(?:\\d{4}[- ]?){3}\\d{4}\\b"
       weight: 1.0
       category: high_risk
-calibration:
-  method: regex_pattern_matching
   thresholds:
-    tAllow: 0.3
-    tBlock: 0.4
-  weights:
-    high_risk: 0.4
-    medium_risk: 0.15
-  validationStats:
-    accuracy: 0.97
-    precision: 0.95
-    recall: 0.98
-    f1: 0.965
-    datasetSize: 100
+    block: 0.4
+    warn: 0.3
+    pass: 0.7
+calibration:
+  sampleSize: 100
+  accuracy: 0.97
+  precision: 0.95
+  recall: 0.98
+  f1Score: 0.965
+  calibratedAt: "2026-02-01T00:00:00Z"
+  thresholdTuned: 0.4
 evaluation:
-  language: javascript
-  file: index.js
+  endpoint: http://localhost:3001/evaluate
+  provider: local
